@@ -7,6 +7,10 @@ export const GlobalStyle = createGlobalStyle`
     box-sizing: border-box;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   :focus {
     outline: transparent;
     box-shadow: 0 0 0 1px ${(props) => props.theme['yellow-dark']};
