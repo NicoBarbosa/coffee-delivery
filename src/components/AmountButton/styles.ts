@@ -23,6 +23,10 @@ export const AmountButtonContainer = styled.div`
     &:hover {
       color: ${(props) => props.theme['purple-dark']};
     }
+
+    &:focus {
+      box-shadow: 0 0 0 0 transparent;
+    }
   }
 
   span {
