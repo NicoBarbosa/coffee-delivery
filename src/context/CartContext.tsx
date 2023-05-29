@@ -13,6 +13,9 @@ export interface CoffeeType {
 interface CartContextProps {
   cart: CoffeeType[]
   addCart: (product: CoffeeType) => void
+  addAmount: (id: string) => void
+  decrementAmount: (id: string) => void
+  removeItem: (id: string) => void
 }
 
 interface CartProviderType {
@@ -22,7 +25,15 @@ interface CartProviderType {
 export const CartContext = createContext({} as CartContextProps)
 
 export function CartProvider({ children }: CartProviderType) {
-  const [cart, setCart] = useState([] as CoffeeType[])
+  const [cart, setCart] = useState<CoffeeType[]>(() => {
+    const storage = localStorage.getItem('@CoffeeDelivery:cart-1.0.0')
+
+    if (storage) {
+      return JSON.parse(storage)
+    }
+
+    return []
+  })
 
   function addCart(product: CoffeeType) {
     const copyCart = [...cart]
@@ -32,12 +43,53 @@ export function CartProvider({ children }: CartProviderType) {
 
     if (coffee || productIndex > 0) {
       return copyCart
-      // copyCart[productIndex].amount += product.amount
     } else {
       copyCart.push(product)
     }
 
     setCart(copyCart)
+    localStorage.setItem('@CoffeeDelivery:cart-1.0.0', JSON.stringify(copyCart))
+  }
+
+  function addAmount(id: string) {
+    const copyCart = [...cart]
+
+    const item = copyCart.findIndex((item) => item.id === id)
+
+    if (item >= 0) {
+      const coffee = copyCart[item]
+      copyCart[item].amount = coffee.amount + 1
+    }
+
+    setCart(copyCart)
+    localStorage.setItem('@CoffeeDelivery:cart-1.0.0', JSON.stringify(copyCart))
+  }
+
+  function decrementAmount(id: string) {
+    const copyCart = [...cart]
+
+    const item = copyCart.findIndex((item) => item.id === id)
+
+    if (item >= 0) {
+      const coffee = copyCart[item]
+      copyCart[item].amount = coffee.amount - 1
+    }
+
+    setCart(copyCart)
+    localStorage.setItem('@CoffeeDelivery:cart-1.0.0', JSON.stringify(copyCart))
+  }
+
+  function removeItem(id: string) {
+    const copyCart = [...cart]
+
+    const item = copyCart.findIndex((item) => item.id === id)
+
+    if (item >= 0) {
+      copyCart.splice(item, 1)
+    }
+
+    setCart(copyCart)
+    localStorage.setItem('@CoffeeDelivery:cart-1.0.0', JSON.stringify(copyCart))
   }
   console.log(cart)
   return (
@@ -45,6 +97,9 @@ export function CartProvider({ children }: CartProviderType) {
       value={{
         cart,
         addCart,
+        addAmount,
+        decrementAmount,
+        removeItem,
       }}
     >
       {children}

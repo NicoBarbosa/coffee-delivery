@@ -96,5 +96,5 @@ export const ListCardContainer = styled.div`
   margin-top: 3.375rem;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 2.5rem;
+  gap: 2rem;
 `

@@ -1,23 +1,17 @@
 import { Minus, Plus } from '@phosphor-icons/react'
-import { useState } from 'react'
 import { AmountButtonContainer } from './styles'
 
 interface AmountButtonProps {
-  amountValue: (value: number) => void
+  amount: number
+  addAmount: () => void
+  decrementAmount: () => void
 }
 
-export function AmountButton({ amountValue }: AmountButtonProps) {
-  const [amount, setAmount] = useState(() => 1)
-
-  function addAmount() {
-    setAmount((state) => state + 1)
-    amountValue(amount)
-  }
-  function decrementAmount() {
-    setAmount((state) => state - 1)
-    amountValue(amount)
-  }
-
+export function AmountButton({
+  amount,
+  addAmount,
+  decrementAmount,
+}: AmountButtonProps) {
   return (
     <AmountButtonContainer>
       <button onClick={() => decrementAmount()}>
