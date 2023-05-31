@@ -18,31 +18,52 @@ import {
   Bank,
   Money,
 } from '@phosphor-icons/react'
-import { InputHTMLAttributes, useContext } from 'react'
+import { useContext } from 'react'
 import { CartContext } from '../../context/CartContext'
 import { useForm } from 'react-hook-form'
+import { formatPrice } from '../../utils/formatPrice'
+import { useNavigate } from 'react-router-dom'
 
-interface AddressFormProps {
-  cep: number
-  rua: string
-  numero: number
-  complemento?: string
-  bairro: string
-  cidade: string
-  uf: string
-  payment: InputHTMLAttributes<HTMLInputElement>
-}
+import * as zod from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
 
 // A tag Form está por volta do componente inteiro, então toda vez que atualizamos o estado de AMOUNT de cafés, o react-hook-form renderiza, isso pode ser ruim para performance.
+
+const schema = zod.object({
+  cep: zod.string().min(1),
+  rua: zod.string().min(1).max(20),
+  numero: zod.number().min(1),
+  complemento: zod.string().max(10),
+  bairro: zod.string().min(1).max(20),
+  cidade: zod.string().min(1).max(15),
+  uf: zod.string().max(2),
+  payment: zod.string(),
+})
+
+type Schema = zod.infer<typeof schema>
 
 export function Checkout() {
   const { cart } = useContext(CartContext)
 
-  const { register, handleSubmit } = useForm<AddressFormProps>()
+  const { register, handleSubmit } = useForm<Schema>({
+    resolver: zodResolver(schema),
+  })
 
-  function onSubmit(data: AddressFormProps) {
+  const navigate = useNavigate()
+
+  function onSubmit(data: Schema) {
     console.log(data)
+    navigate('/cart/success')
   }
+
+  const amountOfCoffeesInCart = cart.reduce(
+    (accu, current) => accu + current.amount,
+    0,
+  )
+  const priceSumOfAmountCoffess = 9.9 * amountOfCoffeesInCart
+  const deliveryPrice = Math.floor(Math.random() * 20)
+  const total = priceSumOfAmountCoffess + deliveryPrice
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <CartContainer>
@@ -62,13 +83,13 @@ export function Checkout() {
             </HeaderAdressContainer>
 
             <div>
-              <input type="number" placeholder="CEP" {...register('cep')} />
+              <input type="text" placeholder="CEP" {...register('cep')} />
               <input type="text" placeholder="Rua" {...register('rua')} />
               <span>
                 <input
                   type="number"
                   placeholder="Número"
-                  {...register('numero')}
+                  {...register('numero', { valueAsNumber: true })}
                 />
                 <input
                   type="text"
@@ -166,9 +187,9 @@ export function Checkout() {
                   <strong>Total</strong>
                 </div>
                 <div>
-                  <span>R$ 29,70</span>
-                  <span>R$ 3,50</span>
-                  <strong>R$ 33,20</strong>
+                  <span>R${formatPrice(priceSumOfAmountCoffess)}</span>
+                  <span>R${formatPrice(deliveryPrice)}</span>
+                  <strong>R${formatPrice(total)}</strong>
                 </div>
               </TotalContainer>
               <button type="submit">CONFIRMAR PEDIDO</button>
