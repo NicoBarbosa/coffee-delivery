@@ -59,40 +59,40 @@ export const Summary = styled.aside`
       linear-gradient(#fff 0 0);
     -webkit-mask-composite: destination-out;
   }
+`
 
-  p {
+export const SummaryPinsInformations = styled.span`
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  font-weight: 400;
+  line-height: 1.3rem;
+  color: ${(props) => props.theme['base-text']};
+
+  i {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 999px;
+    background-color: red;
     display: flex;
+    justify-content: center;
     align-items: center;
-    gap: 0.875rem;
-    font-weight: 400;
-    line-height: 1.3rem;
-    color: ${(props) => props.theme['base-text']};
+    color: ${(props) => props.theme.background};
+  }
 
-    i {
-      width: 2rem;
-      height: 2rem;
-      border-radius: 999px;
-      background-color: red;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: ${(props) => props.theme.background};
-    }
+  .mapPin {
+    background: ${(props) => props.theme.purple};
+  }
+  .timerPin {
+    background: ${(props) => props.theme.yellow};
+  }
+  .dollarPin {
+    background: ${(props) => props.theme['yellow-dark']};
+  }
 
-    .mapPin {
-      background: ${(props) => props.theme.purple};
-    }
-    .timerPin {
-      background: ${(props) => props.theme.yellow};
-    }
-    .dollarPin {
-      background: ${(props) => props.theme['yellow-dark']};
-    }
-
-    span {
-      display: flex;
-      flex-direction: column;
-    }
+  span {
+    display: flex;
+    flex-direction: column;
   }
 `
 

@@ -3,12 +3,16 @@ import {
   SuccessContainer,
   Summary,
   SummaryContainer,
+  SummaryPinsInformations,
   TitleContainer,
 } from './styles'
 import deliveryMan from './assets/deliveryMan.svg'
 import { CurrencyDollar, MapPin, Timer } from '@phosphor-icons/react'
+import { useContext } from 'react'
+import { CartContext } from '../../context/CartContext'
 
 export function Success() {
+  const { address } = useContext(CartContext)
   return (
     <SuccessContainer>
       <TitleContainer>
@@ -17,33 +21,38 @@ export function Success() {
       </TitleContainer>
       <SummaryContainer>
         <Summary>
-          <p>
+          <SummaryPinsInformations>
             <i className="mapPin">
               <MapPin weight="fill" />
             </i>
             <span>
               <div>
-                Entrega em <strong>Rua João Daniel Martinelli, 102</strong>
+                Entrega em{' '}
+                <strong>
+                  {address.rua}, {address.numero}
+                </strong>
               </div>
-              <City>Farrapos - Porto Alegre, RS</City>
+              <City>
+                {address.bairro} - {address.cidade}, {address.uf}
+              </City>
             </span>
-          </p>
-          <p>
+          </SummaryPinsInformations>
+          <SummaryPinsInformations>
             <i className="timerPin">
               <Timer weight="fill" />
             </i>
             <span>
               Previsão de entrega<strong> 20 min - 30 min </strong>
             </span>
-          </p>
-          <p>
+          </SummaryPinsInformations>
+          <SummaryPinsInformations>
             <i className="dollarPin">
               <CurrencyDollar />
             </i>
             <span>
-              Pagamento na entrega <strong>Cartão de Crédito</strong>
+              Pagamento na entrega <strong>{address.payment}</strong>
             </span>
-          </p>
+          </SummaryPinsInformations>
         </Summary>
         <img src={deliveryMan} alt="Delivery Man Image" />
       </SummaryContainer>

@@ -43,7 +43,7 @@ const schema = zod.object({
 type Schema = zod.infer<typeof schema>
 
 export function Checkout() {
-  const { cart } = useContext(CartContext)
+  const { cart, onAddAddress } = useContext(CartContext)
 
   const { register, handleSubmit } = useForm<Schema>({
     resolver: zodResolver(schema),
@@ -52,7 +52,7 @@ export function Checkout() {
   const navigate = useNavigate()
 
   function onSubmit(data: Schema) {
-    console.log(data)
+    onAddAddress(data)
     navigate('/cart/success')
   }
 
@@ -130,7 +130,7 @@ export function Checkout() {
               <input
                 type="radio"
                 id="credit"
-                value="credit"
+                value="Cartão de crédito"
                 {...register('payment')}
               />
               <label htmlFor="credit">
@@ -143,14 +143,14 @@ export function Checkout() {
                 value="debit"
                 {...register('payment')}
               />
-              <label htmlFor="debit">
+              <label htmlFor="Cartão de débito">
                 <Bank />
                 <span>CARTÃO DE DÉBITO</span>
               </label>
               <input
                 type="radio"
                 id="money"
-                value="money"
+                value="Dinheiro"
                 {...register('payment')}
               />
               <label htmlFor="money">

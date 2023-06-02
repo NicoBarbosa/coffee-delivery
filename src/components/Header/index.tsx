@@ -9,8 +9,11 @@ import { NavLink } from 'react-router-dom'
 import logoCoffee from '../../assets/coffee-logo.svg'
 import { ShoppingCart, MapPin } from '@phosphor-icons/react'
 import { defaultTheme } from '../../styles/themes/default'
+import { useContext } from 'react'
+import { CartContext } from '../../context/CartContext'
 
 export function Header() {
+  const { address } = useContext(CartContext)
   return (
     <FixedMenuContainer>
       <HeaderContainer>
@@ -21,7 +24,7 @@ export function Header() {
         <LocationInfoAndCart>
           <span>
             <MapPin size={22} weight="fill" fill={defaultTheme.purple} />
-            Porto Alegre, RS
+            {address ? `${address.cidade}, ${address.uf}` : 'Onde você está?'}
           </span>
           <NavLink to={'/cart'} title="Carrinho de compras">
             <CartButton>

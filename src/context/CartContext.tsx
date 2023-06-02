@@ -10,12 +10,25 @@ export interface CoffeeType {
   amount: number
 }
 
+interface AddressProps {
+  cep: string
+  rua: string
+  numero: number
+  complemento: string
+  bairro: string
+  cidade: string
+  uf: string
+  payment: string
+}
+
 interface CartContextProps {
   cart: CoffeeType[]
+  address: AddressProps
   addCart: (product: CoffeeType) => void
   addAmount: (id: string) => void
   decrementAmount: (id: string) => void
   removeItem: (id: string) => void
+  onAddAddress: (data: AddressProps) => void
 }
 
 interface CartProviderType {
@@ -34,6 +47,21 @@ export function CartProvider({ children }: CartProviderType) {
 
     return []
   })
+
+  const [address, setAddress] = useState<AddressProps>(() => {
+    const storageAdress = localStorage.getItem('@AddressInformations-1.0.0')
+
+    if (storageAdress) {
+      return JSON.parse(storageAdress)
+    }
+
+    return ''
+  })
+
+  function onAddAddress(data: AddressProps) {
+    setAddress(data)
+    localStorage.setItem('@AddressInformations-1.0.0', JSON.stringify(data))
+  }
 
   function addCart(product: CoffeeType) {
     const copyCart = [...cart]
@@ -96,10 +124,12 @@ export function CartProvider({ children }: CartProviderType) {
     <CartContext.Provider
       value={{
         cart,
+        address,
         addCart,
         addAmount,
         decrementAmount,
         removeItem,
+        onAddAddress,
       }}
     >
       {children}
