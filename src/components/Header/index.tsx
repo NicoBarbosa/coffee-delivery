@@ -13,7 +13,7 @@ import { useContext } from 'react'
 import { CartContext } from '../../context/CartContext'
 
 export function Header() {
-  const { address } = useContext(CartContext)
+  const { address, cart } = useContext(CartContext)
   return (
     <FixedMenuContainer>
       <HeaderContainer>
@@ -28,6 +28,8 @@ export function Header() {
           </span>
           <NavLink to={'/cart'} title="Carrinho de compras">
             <CartButton>
+              {cart.length >= 1 && <span className="badge">{cart.length}</span>}
+
               <ShoppingCart size={22} weight="fill" />
             </CartButton>
           </NavLink>

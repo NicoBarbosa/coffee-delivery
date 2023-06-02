@@ -42,8 +42,26 @@ export const CartButton = styled.button`
   padding: 0.5rem;
   border: 0;
   border-radius: 6px;
+  position: relative;
 
   background-color: ${(props) => props.theme['yellow-light']};
   color: ${(props) => props.theme['yellow-dark']};
   cursor: pointer;
+
+  .badge {
+    position: absolute;
+    display: flex;
+    top: -10px;
+    right: -10px;
+    border-radius: 999px;
+    width: 1.25rem;
+    height: 1.25rem;
+    justify-content: center;
+    align-items: center;
+    background: ${(props) => props.theme['yellow-dark']};
+    color: #fff;
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
 `
