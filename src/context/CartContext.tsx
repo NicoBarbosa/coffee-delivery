@@ -1,4 +1,5 @@
 import { ReactNode, createContext, useState } from 'react'
+import { toast } from 'react-toastify'
 
 export interface CoffeeType {
   id: string
@@ -70,9 +71,17 @@ export function CartProvider({ children }: CartProviderType) {
     const coffee = copyCart.find((item) => item.id === product.id)
 
     if (coffee || productIndex > 0) {
+      toast.error('O café já está no carrinho!', {
+        position: 'bottom-right',
+        autoClose: 2000,
+      })
       return copyCart
     } else {
       copyCart.push(product)
+      toast.success('☕️ Café adicionado!', {
+        position: 'bottom-right',
+        autoClose: 2000,
+      })
     }
 
     setCart(copyCart)

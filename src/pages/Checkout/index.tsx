@@ -4,6 +4,7 @@ import {
   CoffessSelectedContainer,
   HeaderAdressContainer,
   HeaderPaymentContainer,
+  ItemCartEmpty,
   PaymentContainer,
   PaymentOptions,
   TotalContainer,
@@ -27,14 +28,12 @@ import { useNavigate } from 'react-router-dom'
 import * as zod from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 
-// A tag Form está por volta do componente inteiro, então toda vez que atualizamos o estado de AMOUNT de cafés, o react-hook-form renderiza, isso pode ser ruim para performance.
-
 const schema = zod.object({
   cep: zod.string().min(1),
   rua: zod.string().min(1).max(20),
   numero: zod.number().min(1),
-  complemento: zod.string().max(10),
-  bairro: zod.string().min(1).max(20),
+  complemento: zod.string().max(20),
+  bairro: zod.string().min(1).max(25),
   cidade: zod.string().min(1).max(15),
   uf: zod.string().max(2),
   payment: zod.string(),
@@ -45,29 +44,36 @@ type Schema = zod.infer<typeof schema>
 export function Checkout() {
   const { cart, onAddAddress } = useContext(CartContext)
 
-  const { register, handleSubmit } = useForm<Schema>({
+  const { register, handleSubmit, watch } = useForm<Schema>({
     resolver: zodResolver(schema),
   })
 
   const navigate = useNavigate()
-
   function onSubmit(data: Schema) {
     onAddAddress(data)
     navigate('/cart/success')
   }
+
+  const bairroWatch = watch('bairro', '')
 
   const amountOfCoffeesInCart = cart.reduce(
     (accu, current) => accu + current.amount,
     0,
   )
   const priceSumOfAmountCoffess = 9.9 * amountOfCoffeesInCart
-  const deliveryPrice = Math.floor(Math.random() * 20)
-  const total = priceSumOfAmountCoffess + deliveryPrice
+  let total = priceSumOfAmountCoffess
+  let deliveryPrice = 0
+  if (bairroWatch.length >= 5) {
+    deliveryPrice = Math.floor(Math.random() * 20)
+    total += deliveryPrice
+  }
+
+  const disabledButton = cart.length < 1
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <CartContainer>
-        <section>
+    <CartContainer>
+      <section>
+        <form onSubmit={handleSubmit(onSubmit)} id="addressForm">
           <h2>Complete seu pedido</h2>
           <AdressContainer>
             <HeaderAdressContainer>
@@ -83,16 +89,30 @@ export function Checkout() {
             </HeaderAdressContainer>
 
             <div>
-              <input type="text" placeholder="CEP" {...register('cep')} />
-              <input type="text" placeholder="Rua" {...register('rua')} />
+              <input
+                type="text"
+                placeholder="CEP"
+                maxLength={8}
+                required
+                {...register('cep')}
+              />
+              <input
+                type="text"
+                placeholder="Rua"
+                maxLength={20}
+                required
+                {...register('rua')}
+              />
               <span>
                 <input
                   type="number"
+                  required
                   placeholder="Número"
                   {...register('numero', { valueAsNumber: true })}
                 />
                 <input
                   type="text"
+                  maxLength={20}
                   placeholder="Complemento"
                   {...register('complemento')}
                 />
@@ -100,15 +120,25 @@ export function Checkout() {
               <span>
                 <input
                   type="text"
+                  required
+                  maxLength={25}
                   placeholder="Bairro"
                   {...register('bairro')}
                 />
                 <input
                   type="text"
+                  required
+                  maxLength={15}
                   placeholder="Cidade"
                   {...register('cidade')}
                 />
-                <input type="text" placeholder="UF" {...register('uf')} />
+                <input
+                  type="text"
+                  placeholder="UF"
+                  maxLength={2}
+                  required
+                  {...register('uf')}
+                />
               </span>
             </div>
           </AdressContainer>
@@ -131,6 +161,7 @@ export function Checkout() {
                 type="radio"
                 id="credit"
                 value="Cartão de crédito"
+                required
                 {...register('payment')}
               />
               <label htmlFor="credit">
@@ -140,10 +171,10 @@ export function Checkout() {
               <input
                 type="radio"
                 id="debit"
-                value="debit"
+                value="Cartão de débito"
                 {...register('payment')}
               />
-              <label htmlFor="Cartão de débito">
+              <label htmlFor="debit">
                 <Bank />
                 <span>CARTÃO DE DÉBITO</span>
               </label>
@@ -159,44 +190,48 @@ export function Checkout() {
               </label>
             </PaymentOptions>
           </PaymentContainer>
-        </section>
-        <section>
-          <h2>Cafés selecionados</h2>
-          <CoffessSelectedContainer>
-            {cart.length ? (
-              cart.map((item) => {
-                return (
-                  <ItemCard
-                    key={item.id}
-                    id={item.id}
-                    amount={item.amount}
-                    coffeeType={item.coffeeType}
-                    images={item.images}
-                    price={item.price}
-                  />
-                )
-              })
-            ) : (
-              <p>nao deu</p>
-            )}
-            <footer>
-              <TotalContainer>
-                <div>
-                  <span>Total de itens</span>
-                  <span>Entrega</span>
-                  <strong>Total</strong>
-                </div>
-                <div>
-                  <span>R${formatPrice(priceSumOfAmountCoffess)}</span>
-                  <span>R${formatPrice(deliveryPrice)}</span>
-                  <strong>R${formatPrice(total)}</strong>
-                </div>
-              </TotalContainer>
-              <button type="submit">CONFIRMAR PEDIDO</button>
-            </footer>
-          </CoffessSelectedContainer>
-        </section>
-      </CartContainer>
-    </form>
+        </form>
+      </section>
+      <section>
+        <h2>Cafés selecionados</h2>
+        <CoffessSelectedContainer>
+          {cart.length ? (
+            cart.map((item) => {
+              return (
+                <ItemCard
+                  key={item.id}
+                  id={item.id}
+                  amount={item.amount}
+                  coffeeType={item.coffeeType}
+                  images={item.images}
+                  price={item.price}
+                />
+              )
+            })
+          ) : (
+            <ItemCartEmpty>
+              Poxa, sem doses de felicidade por aqui! 😔 ☕️
+            </ItemCartEmpty>
+          )}
+          <footer>
+            <TotalContainer>
+              <div>
+                <span>Total de itens</span>
+                <span>Entrega</span>
+                <strong>Total</strong>
+              </div>
+              <div>
+                <span>R${formatPrice(priceSumOfAmountCoffess)}</span>
+                <span>R${formatPrice(deliveryPrice)}</span>
+                <strong>R${formatPrice(total)}</strong>
+              </div>
+            </TotalContainer>
+            <button form="addressForm" type="submit" disabled={disabledButton}>
+              CONFIRMAR PEDIDO
+            </button>
+          </footer>
+        </CoffessSelectedContainer>
+      </section>
+    </CartContainer>
   )
 }

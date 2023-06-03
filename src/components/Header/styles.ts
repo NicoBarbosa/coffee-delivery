@@ -60,7 +60,6 @@ export const CartButton = styled.button`
     align-items: center;
     background: ${(props) => props.theme['yellow-dark']};
     color: #fff;
-    font-family: 'Roboto', sans-serif;
     font-size: 0.75rem;
     font-weight: 700;
   }

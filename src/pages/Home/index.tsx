@@ -9,6 +9,8 @@ import {
 import coffeeAdvertising from '../../assets/advertising-coffee.svg'
 import { ShoppingCart, Package, Timer, Coffee } from '@phosphor-icons/react'
 import { CoffeCard } from './components/CoffeCard'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 const coffees = [
   {
@@ -159,6 +161,7 @@ const coffees = [
 export function Home() {
   return (
     <HomeContainer>
+      <ToastContainer />
       <AdvertisingContainer>
         <section>
           <TitleContainer>

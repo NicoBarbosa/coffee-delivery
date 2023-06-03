@@ -171,8 +171,13 @@ export const CoffessSelectedContainer = styled(BoxStyleContainer)`
       cursor: pointer;
       transition: 0.2s background ease-out;
 
-      &:hover {
+      &:not(:disabled)hover {
         background: ${(props) => props.theme['yellow-dark']};
+      }
+
+      &:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
       }
     }
   }
@@ -207,4 +212,17 @@ export const TotalContainer = styled.div`
       text-align: right;
     }
   }
+`
+
+export const ItemCartEmpty = styled.span`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3.06rem 2.5rem;
+  line-height: 0;
+  border-bottom: 1px solid;
+  border-bottom-color: ${(props) => props.theme['base-button']};
+  font-weight: 700;
+  color: ${(props) => props.theme['base-text']};
+  font-size: 0.875rem;
 `
