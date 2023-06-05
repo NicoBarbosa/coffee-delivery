@@ -128,7 +128,7 @@ export function CartProvider({ children }: CartProviderType) {
     setCart(copyCart)
     localStorage.setItem('@CoffeeDelivery:cart-1.0.0', JSON.stringify(copyCart))
   }
-  console.log(cart)
+
   return (
     <CartContext.Provider
       value={{
